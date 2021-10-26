@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>基于.NET 5.0 的绿色版静态文件服务器</h1>
+    <h2>用途</h2>
+    <p>前端开发很多时候不需要node.js、webpack甚至带插件vscode编辑器，但需要一个WebServer来支持http协议。如果是使用histrory的单页应用，需要一个可以把所有路由解析到index.html的服务器。</p>
+    <h2>文件说明</h2>
+    <p>主程序：Windows下WebServer.exe，Linux为WebServer</p>
+    <p>配置文件：appsetting.json，默认可以没有。</p>
+    <p>server.urls配置启动URL，默认值为："https://127.0.0.1:0"。默认会动态查找空闲的端口启动程序。</p>
+    <p>wwwroot配置网站根目录名称；默认值为："wwwroot"。</p>
+    <p>spa配置是否使用单页路由，默认值为true，请求不存在的文件时会路由到/index.html。</p>
+</body>
+</html>
