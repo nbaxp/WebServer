@@ -14,12 +14,9 @@ namespace WebServer
     {
         private static readonly string _origins = "AllowAllHeaders";
 
-        /// <summary>
-        /// https://github.com/dotnet/aspnetcore/blob/main/src/DefaultBuilder/src/WebHost.cs
-        /// </summary>
-        /// <param name="args"></param>
         public static void Main(string[] args)
         {
+            //https://github.com/dotnet/aspnetcore/blob/main/src/DefaultBuilder/src/WebHost.cs
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
