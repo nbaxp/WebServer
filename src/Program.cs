@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -16,7 +20,6 @@ namespace WebServer
 
         public static void Main(string[] args)
         {
-            //https://github.com/dotnet/aspnetcore/blob/main/src/DefaultBuilder/src/WebHost.cs
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -42,15 +45,6 @@ namespace WebServer
                                 .AllowCredentials();
                             }));
                         services.AddControllersWithViews();
-                        using var o = services.BuildServiceProvider();
-                        var config = o.GetService<IConfiguration>();
-                        if (config.GetValue("spa", true))
-                        {
-                            services.AddSpaStaticFiles(configuration =>
-                            {
-                                configuration.RootPath = config.GetValue("wwwroot", "wwwroot");
-                            });
-                        }
                     });
                     webBuilder.Configure(app =>
                     {
@@ -67,15 +61,32 @@ namespace WebServer
                                 pattern: "{controller}/{action=Index}/{id?}");
                         });
                         var config = app.ApplicationServices.GetService<IConfiguration>();
-                        if (config.GetValue("spa", true))
-                        {
-                            app.UseSpaStaticFiles();
-                            app.UseSpa(spa =>
-                            {
-                                spa.Options.SourcePath = config.GetValue("wwwroot", "wwwroot");
-                            });
-                        }
                         app.UseDefaultFiles();
+                        app.Use(async (context, next) =>
+                        {
+                            if (context.GetEndpoint() != null)
+                            {
+                                await next.Invoke();
+                            }
+                            else
+                            {
+                                var mode = config.GetValue("spa", 0);
+                                if (mode == 1)
+                                {
+                                    var env = context.RequestServices.GetService<IWebHostEnvironment>();
+                                    var file = Path.Combine(env.WebRootPath, "index.html");
+                                    await context.Response.WriteAsync(File.ReadAllText(file));
+                                }
+                                else if (mode == 2)
+                                {
+                                    var query = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
+                                    query.Add("route", context.Request.Path.Value);
+                                    var url = "/" + new QueryBuilder(query).ToQueryString();
+                                    context.Response.Redirect(url);
+                                }
+                            }
+                            //await next.Invoke();
+                        });
                     });
                 })
                 .Build()

@@ -1,0 +1,31 @@
+﻿<template>
+    <div class="container-fluid">
+        <nav class="navbar">
+            <ul class="nav nav-pills justify-content-center">
+                <li class="nav-item">
+                    <router-link active-class="active" class="nav-link"to="/" >首页</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link active-class="active" class="nav-link" to="/views/spa?query1=value1">单页应用</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link active-class="active" class="nav-link" to="/views/test/page3">Test Page3</router-link>
+                </li>
+            </ul>
+        </nav>
+        <div class="row">
+            <slot></slot>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        mounted: function () {
+        }
+    }
+</script>
+<style>
+    .navbar {
+        padding:1em;
+    }
+</style>
