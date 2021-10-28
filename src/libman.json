@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "defaultProvider": "jsdelivr",
+  "libraries": [
+    {
+      "library": "vue@3.2.20",
+      "destination": "wwwroot/lib/vue",
+      "files": [ "dist/*" ]
+    },
+    {
+      "library": "vue-router@4.0.12",
+      "destination": "wwwroot/lib/vue-router",
+      "files": [ "dist/*" ]
+    },
+    {
+      "library": "element-plus@1.1.0-beta.24",
+      "destination": "wwwroot/lib/element-plus",
+      "files": [ "dist/*" ]
+    },
+    {
+      "library": "@arco-design/web-vue@2.0.2",
+      "destination": "wwwroot/lib/arco-design",
+      "files": [ "dist/*" ]
+    },
+    {
+      "library": "@nutui/nutui@3.1.10-beta.1",
+      "destination": "wwwroot/lib/nutui",
+      "files": [ "dist/*" ]
+    },
+    {
+      "library": "vant@3.2.6",
+      "destination": "wwwroot/lib/vant",
+      "files": [ "lib/index.css", "lib/vant.js" ]
+    },
+    {
+      "library": "marked@3.0.8",
+      "destination": "wwwroot/lib/marked",
+      "files": [ "marked.min.js" ]
+    }
+  ]
+}

@@ -8,7 +8,7 @@ var MyVueExt = (function () {
     var styleCounter = 'vc-style-counter';
     var routerHome = '/views/home';
     function log(msg) {
-        if (debug) {
+        if (MyVueExt.debug) {
             console.log(msg);
         }
     }
@@ -28,7 +28,7 @@ var MyVueExt = (function () {
         var template = templateTag ? templateTag.innerHTML : '<template></template>';
         var scriptTag = doc.querySelector('script');
         var script = scriptTag ? scriptTag.innerHTML : '{}';
-        var modelScript = '(' + (script.replace(/^\s*export\s*default\s*/, '').replace(/;?\s*$/, '') || '{}') + ')\n//# sourceURL=' + url;
+        var modelScript = '(' + (script.replace(/^\s*export\s*default\s*/, '').replace(/;?\s*$/, '') || '{}') + ')\n//@ sourceURL=' + url;
         var model = eval(modelScript);
         var styleTag = doc.querySelector('style');
         if (styleTag) {

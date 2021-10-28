@@ -8,7 +8,7 @@
         var route = '#' + document.location.pathname + document.location.search;
         history.replaceState(null, null, '/' + route);
     </script>
-    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="lib/element-plus/dist/index.css" />
     <title>前端</title>
 </head>
 
@@ -16,8 +16,10 @@
     <div id="app">
         <router-view />
     </div>
+    <script src="lib/marked/marked.min.js"></script>
     <script src="js/vue.global.ext.js"></script>
-    <script src="js/vue-router.global.js"></script>
+    <script src="lib/vue-router/dist/vue-router.global.js"></script>
+    <script src="lib/element-plus/dist/index.full.js"></script>
     <script src="js/my.vue.ext.js"></script>
     <script src="main.js"></script>
 </body>

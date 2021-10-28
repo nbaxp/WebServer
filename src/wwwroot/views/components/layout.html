@@ -1,31 +1,60 @@
 ﻿<template>
-    <div class="container-fluid">
-        <nav class="navbar">
-            <ul class="nav nav-pills justify-content-center">
-                <li class="nav-item">
-                    <router-link active-class="active" class="nav-link"to="/" >首页</router-link>
-                </li>
-                <li class="nav-item">
-                    <router-link active-class="active" class="nav-link" to="/views/spa?query1=value1">单页应用</router-link>
-                </li>
-                <li class="nav-item">
-                    <router-link active-class="active" class="nav-link" to="/views/test/page3">Test Page3</router-link>
-                </li>
-            </ul>
-        </nav>
-        <div class="row">
-            <slot></slot>
-        </div>
-    </div>
+    <el-container>
+        <el-header>
+            <el-menu :default-active="activeIndex" mode="horizontal">
+                <el-menu-item v-for="menu in model.menus" :index="menu.path">
+                    <router-link :to="menu.path">{{menu.text}}</router-link>
+                </el-menu-item>
+            </el-menu>
+        </el-header>
+        <el-container>
+            <el-aside width="200px">Aside</el-aside>
+            <el-container>
+                <el-main>
+                    <slot></slot>
+                </el-main>
+                <el-footer>
+                    <div style="text-align:center;">© 2021 Company, Inc.</div>
+                </el-footer>
+            </el-container>
+        </el-container>
+    </el-container>
 </template>
 <script>
     export default {
+        data() {
+            return {
+                model: {
+                    active: '/',
+                    menus: []
+                }
+            };
+        },
         mounted: function () {
+            setTimeout(o => {
+                this.model = {
+                    active: '/',
+                    menus: [
+                        {
+                            text: '首页',
+                            path: '/',
+                        },
+                        {
+                            text: 'SPA',
+                            path:'/views/spa'
+                        },
+                        {
+                            text: 'Test',
+                            path:'/views/test/page3'
+                        }
+                    ]
+                };
+            });
         }
     }
 </script>
 <style>
     .navbar {
-        padding:1em;
+        padding: 1em;
     }
 </style>

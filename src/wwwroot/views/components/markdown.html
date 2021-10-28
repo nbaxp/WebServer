@@ -1,0 +1,14 @@
+﻿<template>
+    <div ref="markdown">
+        <slot></slot>
+    </div>
+</template>
+<script>
+    export default {
+        mounted: function () {
+            this.$nextTick(function () {
+                this.$refs.markdown.innerHtml = marked(this.$refs.markdown.innerText);
+            });
+        }
+    }
+</script>
