@@ -8,12 +8,18 @@
         var route = '#' + document.location.pathname + document.location.search;
         history.replaceState(null, null, '/' + route);
     </script>
+    <link rel="stylesheet" href="css/mk.css" />
     <link rel="stylesheet" href="lib/element-plus/dist/index.css" />
+    <style>
+        .loading {
+            background-color: lightblue;
+        }
+    </style>
     <title>前端</title>
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" class="loading">
         <router-view />
     </div>
     <script src="lib/marked/marked.min.js"></script>

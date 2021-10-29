@@ -11,9 +11,10 @@
         //    var fullPath = query ? (route + '?' + query) : route;
         //    this.$router.push(fullPath);
         //}
-        //if (route) {
-        //    this.$router.push(route.substr(1));
-        //}
+        if (route) {
+            this.$router.push(route.substr(1));
+        }
+        document.getElementById('app').removeAttribute('class');
     }
 });
 app.use(ElementPlus);

@@ -1,14 +1,22 @@
 ﻿<template>
-    <div ref="markdown">
+    <pre ref="markdown" style="display:none;">
         <slot></slot>
-    </div>
+    </pre>
+    <div class="markdown-body gitpages" v-html="html"></div>
 </template>
 <script>
     export default {
+        data() {
+            return {
+                html: ''
+            };
+        },
         mounted: function () {
             this.$nextTick(function () {
-                this.$refs.markdown.innerHtml = marked(this.$refs.markdown.innerText);
+                this.html = marked(this.$refs.markdown.innerText);
             });
         }
     }
 </script>
+<style>
+</style>
