@@ -1,0 +1,61 @@
+﻿<template>
+    <layout>
+        <markdown>
+            <pre>
+            # a
+
+            ## b
+            </pre>
+        </markdown>
+        <el-card>
+            <template #header>
+                <div class="card-header">前端开发风格</div>
+            </template>
+            <p>面向DOM开发：直接使用HTML标签，使用CSS控制样式，使用JavaScript操作DOM，数据和展示混合在一起。</p>
+            <p>面向组件开发：界面由组件树组成，组件的数据由JSON对象定义，通常组件使用变量而不是常量，这样数据的维护和展示可以分开表示</p>
+        </el-card>
+        <br />
+        <el-card>
+            <template #header>
+                <div class="card-header">前端路由</div>
+            </template>
+            <pre>
+            1. Hash模式
+                1.1 /#/route1/route2?name=value：后端正常返回当前目录下index.html;css和js正常加载，路由组件默认处理了Url片段。
+                1.2 /path1/path2/#route1/route2?name=value：后端正常返回当前目录下index.html;css和js正常加载，路由组件默认处理了Url片段。
+            2. History模式
+                2.1 /route1/route2?name=value：后端返回/index.html下内容和/route1/route2?name=value作为路由path。
+                    2.1.1 通过重定向返回时，css和js正常加载；
+                    2.1.2 不通过重定向返回时，需要把index.html的路径和路由path以response head或cookie的方式返回给前端，前端在加载css和js前，先history.replaceState成index.html所在的path，保证css和js可以正常加载。
+                    2.1.3 此时可以push路由path，地址栏的url会恢复正常
+                2.2 /path1/path2/route1/route2?name=value：返回 /path1/path2/index.html内容和/route1/route2?name=value作为路由path
+                    2.2.1 同上
+                    2.2.2 同上
+                    2.2.3 同上
+            3. 重定向还是不重定向
+                3.1 重定向：不需要处理header或cookie，不需要在加载css前进行history.replaceState
+                3.2 不重定向：不会跳转
+            </pre>
+        </el-card>
+        <br />
+        <el-card>
+            <template #header>
+                <div class="card-header">库的作用</div>
+            </template>
+            <p>真实问题：为了解决某些问题引入了库，这些问题是真实问题；</p>
+            <p>代价问题：因为引入了库产生的问题，这些问题是代价问题；</p>
+            <p>如果不需要考虑项目的维护，可以使用代码复用代替库，否则不要随便重新发明轮子。</p>
+        </el-card>
+    </layout>
+</template>
+<script>
+    export default {
+        mounted: function () {
+        }
+    }
+</script>
+<style>
+    h1 {
+        color: brown;
+    }
+</style>

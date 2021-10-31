@@ -5,8 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
-        var route = '#' + document.location.pathname + document.location.search;
-        history.replaceState(null, null, '/' + route);
+        //未来修复css、js引用，非默认页的先使用history.replaceState方式按照hash路由格式保证正常加载
+        if (location.pathname !== '/') {
+            window.route = '#' + document.location.pathname + document.location.search;
+            history.replaceState(null, null, '/' + route);
+        }
     </script>
     <link rel="stylesheet" href="css/mk.css" />
     <link rel="stylesheet" href="lib/element-plus/dist/index.css" />
@@ -15,17 +18,19 @@
             background-color: lightblue;
         }
     </style>
-    <title>前端</title>
+    <title>FE</title>
 </head>
 
 <body>
     <div id="app" class="loading">
         <router-view />
     </div>
+    <script src="lib/linq/linq.min.js"></script>
     <script src="lib/marked/marked.min.js"></script>
     <script src="js/vue.global.ext.js"></script>
-    <script src="lib/vue-router/dist/vue-router.global.js"></script>
-    <script src="lib/element-plus/dist/index.full.js"></script>
+    <script src="lib/vuex/dist/vuex.global.min.js"></script>
+    <script src="lib/vue-router/dist/vue-router.global.min.js"></script>
+    <script src="lib/element-plus/dist/index.full.min.js"></script>
     <script src="js/my.vue.ext.js"></script>
     <script src="main.js"></script>
 </body>

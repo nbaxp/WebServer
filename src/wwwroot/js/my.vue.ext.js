@@ -3,10 +3,10 @@ var MyVueExt = (function () {
     var exports = {};
     var debug = false;
     var basePath = document.location.pathname.substr(0, document.location.pathname.lastIndexOf('/'));
-    var componentsPath = '/views/components/';
+    var componentsPath = '/components/';
     var fileExt = '.html';
     var styleCounter = 'vc-style-counter';
-    var routerHome = '/views/home';
+    var routerHome = '/index';
     function log(msg) {
         if (MyVueExt.debug) {
             console.log(msg);
@@ -79,7 +79,7 @@ var MyVueExt = (function () {
     function patchComponent(instance, name, fun) {
         var result = fun();
         if (!result || typeof (result) === 'string') {
-            var url = basePath + componentsPath + name.replaceAll('-', "/") + fileExt;
+            var url = MyVueExt.basePath + componentsPath + name.replaceAll('-', "/") + fileExt;
             addComponent(instance, name, url);
             result = fun();
         }
@@ -89,7 +89,7 @@ var MyVueExt = (function () {
         router.beforeEach((to, from, next) => {
             var url = to.path === '/' ? routerHome : to.path;
             var name = url.substring(1).replaceAll('/', "-");
-            url = MyVueExt.basePath + url + MyVueExt.fileExt;
+            url = MyVueExt.basePath + '/components/views' + url + MyVueExt.fileExt;
             if (!router.hasRoute(name)) {
                 fetch(url).then(function (response) {
                     return response.text();
