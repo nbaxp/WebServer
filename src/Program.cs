@@ -70,7 +70,7 @@ namespace WebServer
                             else
                             {
                                 var mode = config.GetValue("spa", 0);
-                                if (mode == 1)
+                                if (mode != 0)
                                 {
                                     var path = context.Request.Path;
                                     if (!string.IsNullOrEmpty(Path.GetExtension(path)))
@@ -97,8 +97,26 @@ namespace WebServer
                                         }
                                         if (!string.IsNullOrEmpty(file))
                                         {
-                                            context.Response.Headers.Add("x-c-file", file.Replace('\\', '/'));
-                                            await context.Response.WriteAsync(File.ReadAllText(file));
+                                            if(string.IsNullOrEmpty(cpath))
+                                            {
+                                                cpath = "/";
+                                            }
+                                            context.Response.Headers.Add("x-real-file", cpath);
+                                            if (mode == 1)
+                                            {
+                                                await context.Response.WriteAsync(File.ReadAllText(file));
+                                            }
+                                            else
+                                            {
+                                                var query = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
+                                                var queryKey = "route";
+                                                if(!query.ContainsKey(queryKey))
+                                                {
+                                                    query.Add("route", context.Request.Path.Value);
+                                                }
+                                                var url = cpath + new QueryBuilder(query).ToQueryString();
+                                                context.Response.Redirect(url);
+                                            }
                                         }
                                         else
                                         {
@@ -106,13 +124,54 @@ namespace WebServer
                                         }
                                     }
                                 }
-                                else if (mode == 2)
+                                else
                                 {
-                                    var query = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
-                                    query.Add("route", context.Request.Path.Value);
-                                    var url = "/" + new QueryBuilder(query).ToQueryString();
-                                    context.Response.Redirect(url);
+                                    await next.Invoke();
                                 }
+
+                                //if (mode != 1)
+                                //{
+                                //    var path = context.Request.Path;
+                                //    if (!string.IsNullOrEmpty(Path.GetExtension(path)))
+                                //    {
+                                //        await next.Invoke();
+                                //    }
+                                //    else
+                                //    {
+                                //        var env = context.RequestServices.GetService<IWebHostEnvironment>();
+                                //        var cpath = path.Value.TrimEnd('/');
+                                //        var file = string.Empty;
+                                //        while (true)
+                                //        {
+                                //            file = env.WebRootPath + cpath + "/index.html";
+                                //            if (File.Exists(file))
+                                //            {
+                                //                break;
+                                //            }
+                                //            if (string.IsNullOrEmpty(cpath))
+                                //            {
+                                //                break;
+                                //            }
+                                //            cpath = cpath.Substring(0, cpath.LastIndexOf('/'));
+                                //        }
+                                //        if (!string.IsNullOrEmpty(file))
+                                //        {
+                                //            context.Response.Headers.Add("x-c-file", file.Replace('\\', '/'));
+                                //            await context.Response.WriteAsync(File.ReadAllText(file));
+                                //        }
+                                //        else
+                                //        {
+                                //            await next.Invoke();
+                                //        }
+                                //    }
+                                //}
+                                //else if (mode == 2)
+                                //{
+                                //    var query = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
+                                //    query.Add("route", context.Request.Path.Value);
+                                //    var url = "/" + new QueryBuilder(query).ToQueryString();
+                                //    context.Response.Redirect(url);
+                                //}
                             }
                         });
                     });
