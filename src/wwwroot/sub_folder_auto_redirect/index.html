@@ -11,7 +11,7 @@
             window.route = route.substr(window.appPath.length - 1);
         }
         else {
-            window.appPath = '/sub_folder_test/';//定义部署位置
+            window.appPath = '/sub_folder_auto_redirect/';//定义部署位置
             if (location.pathname !== window.appPath) {//使用history.replaceState保证部署位置相对地址资源正确加载
                 window.route = location.pathname.substr(window.appPath.length - 1) + location.search;
                 history.replaceState(null, null, window.appPath + '#' + window.route);
