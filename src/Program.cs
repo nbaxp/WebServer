@@ -72,9 +72,39 @@ namespace WebServer
                                 var mode = config.GetValue("spa", 0);
                                 if (mode == 1)
                                 {
-                                    var env = context.RequestServices.GetService<IWebHostEnvironment>();
-                                    var file = Path.Combine(env.WebRootPath, "index.html");
-                                    await context.Response.WriteAsync(File.ReadAllText(file));
+                                    var path = context.Request.Path;
+                                    if (!string.IsNullOrEmpty(Path.GetExtension(path)))
+                                    {
+                                        await next.Invoke();
+                                    }
+                                    else
+                                    {
+                                        var env = context.RequestServices.GetService<IWebHostEnvironment>();
+                                        var cpath = path.Value.TrimEnd('/');
+                                        var file = string.Empty;
+                                        while (true)
+                                        {
+                                            file = env.WebRootPath + cpath + "/index.html";
+                                            if (File.Exists(file))
+                                            {
+                                                break;
+                                            }
+                                            if (string.IsNullOrEmpty(cpath))
+                                            {
+                                                break;
+                                            }
+                                            cpath = cpath.Substring(0, cpath.LastIndexOf('/'));
+                                        }
+                                        if (!string.IsNullOrEmpty(file))
+                                        {
+                                            context.Response.Headers.Add("x-c-file", file.Replace('\\', '/'));
+                                            await context.Response.WriteAsync(File.ReadAllText(file));
+                                        }
+                                        else
+                                        {
+                                            await next.Invoke();
+                                        }
+                                    }
                                 }
                                 else if (mode == 2)
                                 {
@@ -84,7 +114,6 @@ namespace WebServer
                                     context.Response.Redirect(url);
                                 }
                             }
-                            //await next.Invoke();
                         });
                     });
                 })

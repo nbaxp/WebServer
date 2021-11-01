@@ -119,7 +119,7 @@ var MyVueExt = (function () {
                     }
                 }
             }
-            console.warn('debug:'+MyVueExt.basePath+ '/apps' + root + '/components/views' + path + MyVueExt.fileExt);
+            console.error('debug:'+MyVueExt.basePath+ '/apps' + root + '/components/views' + path + MyVueExt.fileExt);
             if (!router.hasRoute(name)) {
                 fetch(url).then(function (response) {
                     return response.text();

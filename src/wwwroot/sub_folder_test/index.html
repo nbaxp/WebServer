@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
-        window.appPath = '/';//定义部署位置 window.appPath = '/sub_folder_test/';
+        window.appPath = '/sub_folder_test/';//定义部署位置
         if (location.pathname !== window.appPath) {//使用history.replaceState保证部署位置相对地址资源正确加载
             window.route = location.pathname.substr(window.appPath.length - 1) + location.search;
             history.replaceState(null, null, window.appPath + '#' + window.route);
@@ -34,4 +34,5 @@
     <script src="js/my.vue.ext.js"></script>
     <script src="main.js"></script>
 </body>
+
 </html>
