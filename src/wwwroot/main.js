@@ -31,12 +31,12 @@ const store = Vuex.createStore({
                     text: 'Web基础',
                     path: '/',
                 },
-                {
-                    name: 'js',
-                    text: 'JavaScript库',
-                    path: '/library',
-                    order: 1
-                },
+                //{
+                //    name: 'js',
+                //    text: 'JavaScript库',
+                //    path: '/library',
+                //    order: 1
+                //},
             ]
         }
     },

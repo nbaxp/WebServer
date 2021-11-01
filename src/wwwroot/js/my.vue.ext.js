@@ -19,8 +19,40 @@ var MyVueExt = (function () {
         var frag = document.createDocumentFragment();
         var div = document.createElement('div');
         div.innerHTML = html;
-        frag.appendChild(div.firstChild);
-        parent.appendChild(frag);
+        var list = div.querySelectorAll('*');
+        for (var i = 0; i < list.length; i++) {
+            parent.appendChild(list[i]);
+        }
+    }
+    function addStyles(name, style) {
+        var styleList = document.querySelectorAll('head style.' + name);
+        if (styleList.length > 0) {
+            for (var i = 0; i < styleList.length; i++) {
+                var style = styleList[i];
+                var counter = parseInt(style.getAttribute(MyVueExt.styleCounter));
+                style.setAttribute(MyVueExt.styleCounter, counter + 1);
+            }
+        }
+        else {
+            if (style) {
+                append(document.head, style)
+            }
+        }
+    }
+    function removeStyles(name) {
+        var styleList = document.querySelectorAll('head style.' + name);
+        if (styleList.length > 0) {
+            for (var i = 0; i < styleList.length; i++) {
+                var style = styleList[i];
+                var counter = parseInt(style.getAttribute(MyVueExt.styleCounter));
+                if (counter - 1 > 0) {
+                    style.setAttribute(MyVueExt.styleCounter, counter - 1);
+                }
+                else {
+                    document.head.removeChild(style);
+                }
+            }
+        }
     }
     function templateToModel(html, name, url) {
         var doc = new DOMParser().parseFromString(html, 'text/html');
@@ -30,11 +62,17 @@ var MyVueExt = (function () {
         var script = scriptTag ? scriptTag.innerHTML : '{}';
         var modelScript = '(' + (script.replace(/^\s*export\s*default\s*/, '').replace(/;?\s*$/, '') || '{}') + ')\n//@ sourceURL=' + url;
         var model = eval(modelScript);
-        var styleTag = doc.querySelector('style');
-        if (styleTag) {
-            styleTag.setAttribute('class', name);
-            styleTag.setAttribute(MyVueExt.styleCounter, 1);
-            model.style = styleTag.outerHTML;
+        var styleTagList = doc.querySelectorAll('style');
+        if (styleTagList.length > 0) {
+            model.style = '\n';
+            for (var i = 0; i < styleTagList.length; i++) {
+                var styleTag = styleTagList[i];
+                if (styleTag) {
+                    styleTag.setAttribute('class', name);
+                    styleTag.setAttribute(MyVueExt.styleCounter, 1);
+                    model.style += styleTag.outerHTML + '\n';
+                }
+            }
         }
         model.template = template;
         return model;
@@ -48,28 +86,10 @@ var MyVueExt = (function () {
                 if (text) {
                     var component = MyVueExt.templateToModel(text, name, url);
                     component.created = function () {
-                        var style = document.querySelector('head style.' + name);
-                        if (style) {
-                            var counter = parseInt(style.getAttribute(MyVueExt.styleCounter));
-                            style.setAttribute(MyVueExt.styleCounter, counter + 1);
-                        }
-                        else {
-                            if (component.style) {
-                                MyVueExt.append(document.querySelector('head'), component.style)
-                            }
-                        }
+                        addStyles(name, component.style);
                     };
                     component.unmounted = function () {
-                        var style = document.querySelector('head style.' + name);
-                        if (style) {
-                            var counter = parseInt(style.getAttribute(MyVueExt.styleCounter));
-                            if (counter - 1 > 0) {
-                                style.setAttribute(MyVueExt.styleCounter, counter - 1);
-                            }
-                            else {
-                                document.head.removeChild(style);
-                            }
-                        }
+                        removeStyles(name);
                     };
                     resolve(component);
                 }
@@ -114,16 +134,13 @@ var MyVueExt = (function () {
         router.beforeResolve(async function (to) {
             var route = router.getRoutes().find(function (item, index) { return item.name === to.name });
             if (route.components.default.style && !document.querySelector('head style.' + to.name)) {
-                MyVueExt.append(document.querySelector('head'), route.components.default.style)
+                MyVueExt.append(document.head, route.components.default.style)
             }
         });
         router.afterEach(function (to, from) {
             if (from.name) {
                 if (to.path !== from.path) {
-                    var style = document.querySelector('head style.' + from.name);
-                    if (style) {
-                        document.head.removeChild(style);
-                    }
+                    removeStyles(from.name);
                 }
             }
         });
