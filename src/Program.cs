@@ -97,20 +97,25 @@ namespace WebServer
                                         }
                                         if (!string.IsNullOrEmpty(file))
                                         {
-                                            if(string.IsNullOrEmpty(cpath))
+                                            if (string.IsNullOrEmpty(cpath))
                                             {
                                                 cpath = "/";
                                             }
-                                            context.Response.Headers.Add("x-real-file", cpath);
+                                            var key = "x-real-file";
+                                            context.Response.Headers.Add(key, cpath);
                                             if (mode == 1)
                                             {
-                                                await context.Response.WriteAsync(File.ReadAllText(file));
+                                                context.Response.Cookies.Delete(key);
+                                                context.Response.Cookies.Append(key, cpath);
+                                                var html = File.ReadAllText(file);
+                                                html = html.Replace("\"./", cpath);
+                                                await context.Response.WriteAsync(html);
                                             }
                                             else
                                             {
                                                 var query = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
                                                 var queryKey = "route";
-                                                if(!query.ContainsKey(queryKey))
+                                                if (!query.ContainsKey(queryKey))
                                                 {
                                                     query.Add("route", context.Request.Path.Value);
                                                 }
