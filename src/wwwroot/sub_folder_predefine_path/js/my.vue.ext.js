@@ -6,7 +6,7 @@ var MyVueExt = (function () {
     var componentsPath = '/components/';
     var fileExt = '.html';
     var styleCounter = 'vc-style-counter';
-    var routerHome = '/index';
+    var routerHome = '/home';
     function log(msg) {
         if (MyVueExt.debug) {
             console.log(msg);
