@@ -32,7 +32,7 @@ function process(r) {
         }
     }
     if (data) {
-        data = data.toString().replace("<head>", "<head data-path='" + path + sep + "'>");
+        data = data.toString().replace("<head>", '<head>\n<base href="' + path + sep + '" />');
         r.headersOut['x-custom-path'] = path + sep;
         r.return(200, data);
     }
