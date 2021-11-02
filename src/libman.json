@@ -25,7 +25,7 @@
     {
       "library": "element-plus@1.1.0-beta.24",
       "destination": "wwwroot/lib/element-plus",
-      "files": [ "dist/index.full.min.js","dist/index.css" ]
+      "files": [ "dist/index.full.min.js","dist/index.css","dist/fonts/*" ]
     },
     {
       "library": "@arco-design/web-vue@2.0.2",
