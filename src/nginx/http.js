@@ -1,6 +1,4 @@
-//https://nginx.org/en/docs/njs/reference.html#njs_api_fs
-var fs = require('fs');
-
+var fs = require('fs');//https://nginx.org/en/docs/njs/reference.html#njs_api_fs
 var root = '/usr/share/nginx/html';
 var indexFile = 'index.html';
 var sep = '/';
@@ -33,7 +31,7 @@ function process(r) {
     }
     if (data) {
         data = data.toString().replace("<head>", '<head>\n    <base href="' + path + sep + '" />');
-        r.headersOut['x-custom-path'] = path + sep;
+        r.headersOut['x-real-path'] = path + sep;
         r.return(200, data);
     }
     else {

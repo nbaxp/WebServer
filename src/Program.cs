@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -50,7 +48,6 @@ namespace WebServer
                         app.UseCors(_origins);
                         app.UseHttpsRedirection();
                         app.UseStaticFiles();
-                        app.UseFileServer();
                         app.UseRouting();
                         app.UseAuthorization();
                         app.UseEndpoints(endpoints =>
@@ -60,7 +57,6 @@ namespace WebServer
                                 pattern: "{controller}/{action=Index}/{id?}");
                         });
                         var config = app.ApplicationServices.GetService<IConfiguration>();
-                        app.UseDefaultFiles();
                         app.Use(async (context, next) =>
                         {
                             if (context.GetEndpoint() != null)
@@ -70,113 +66,42 @@ namespace WebServer
                             else
                             {
                                 var mode = config.GetValue("spa", 0);
-                                if (mode != 0)
+                                if (mode != 0 && !context.Request.Path.Value.EndsWith("aspnetcore-browser-refresh.js"))
                                 {
-                                    var path = context.Request.Path;
-                                    if (!string.IsNullOrEmpty(Path.GetExtension(path)))
+                                    var env = context.RequestServices.GetService<IWebHostEnvironment>();
+                                    var sep = '/';
+                                    var path = context.Request.Path.Value.TrimEnd(sep);
+                                    var file = string.Empty;
+                                    while (true)
                                     {
-                                        await next.Invoke();
+                                        file = env.WebRootPath + path + "/index.html";
+                                        if (File.Exists(file))
+                                        {
+                                            break;
+                                        }
+                                        if (string.IsNullOrEmpty(path))
+                                        {
+                                            break;
+                                        }
+                                        path = path.Substring(0, path.LastIndexOf(sep));
+                                    }
+                                    if (!string.IsNullOrEmpty(file))
+                                    {
+                                        path += sep;
+                                        context.Response.Headers.Add("x-real-path", path);
+                                        var html = File.ReadAllText(file);
+                                        html = html.Replace("<head>", $"<head>\n\t<base href=\"{path}\" />");
+                                        await context.Response.WriteAsync(html);
                                     }
                                     else
                                     {
-                                        var env = context.RequestServices.GetService<IWebHostEnvironment>();
-                                        var cpath = path.Value.TrimEnd('/');
-                                        var file = string.Empty;
-                                        while (true)
-                                        {
-                                            file = env.WebRootPath + cpath + "/index.html";
-                                            if (File.Exists(file))
-                                            {
-                                                break;
-                                            }
-                                            if (string.IsNullOrEmpty(cpath))
-                                            {
-                                                break;
-                                            }
-                                            cpath = cpath.Substring(0, cpath.LastIndexOf('/'));
-                                        }
-                                        if (!string.IsNullOrEmpty(file))
-                                        {
-                                            if (string.IsNullOrEmpty(cpath))
-                                            {
-                                                cpath = "/";
-                                            }
-                                            var key = "x-real-file";
-                                            context.Response.Headers.Add(key, cpath);
-                                            if (mode == 1)
-                                            {
-                                                context.Response.Cookies.Delete(key);
-                                                context.Response.Cookies.Append(key, cpath);
-                                                var html = File.ReadAllText(file);
-                                                html = html.Replace("\"./", cpath);
-                                                await context.Response.WriteAsync(html);
-                                            }
-                                            else
-                                            {
-                                                var query = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
-                                                var queryKey = "route";
-                                                if (!query.ContainsKey(queryKey))
-                                                {
-                                                    query.Add("route", context.Request.Path.Value);
-                                                }
-                                                var url = cpath + new QueryBuilder(query).ToQueryString();
-                                                context.Response.Redirect(url);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            await next.Invoke();
-                                        }
+                                        await next.Invoke();
                                     }
                                 }
                                 else
                                 {
                                     await next.Invoke();
                                 }
-
-                                //if (mode != 1)
-                                //{
-                                //    var path = context.Request.Path;
-                                //    if (!string.IsNullOrEmpty(Path.GetExtension(path)))
-                                //    {
-                                //        await next.Invoke();
-                                //    }
-                                //    else
-                                //    {
-                                //        var env = context.RequestServices.GetService<IWebHostEnvironment>();
-                                //        var cpath = path.Value.TrimEnd('/');
-                                //        var file = string.Empty;
-                                //        while (true)
-                                //        {
-                                //            file = env.WebRootPath + cpath + "/index.html";
-                                //            if (File.Exists(file))
-                                //            {
-                                //                break;
-                                //            }
-                                //            if (string.IsNullOrEmpty(cpath))
-                                //            {
-                                //                break;
-                                //            }
-                                //            cpath = cpath.Substring(0, cpath.LastIndexOf('/'));
-                                //        }
-                                //        if (!string.IsNullOrEmpty(file))
-                                //        {
-                                //            context.Response.Headers.Add("x-c-file", file.Replace('\\', '/'));
-                                //            await context.Response.WriteAsync(File.ReadAllText(file));
-                                //        }
-                                //        else
-                                //        {
-                                //            await next.Invoke();
-                                //        }
-                                //    }
-                                //}
-                                //else if (mode == 2)
-                                //{
-                                //    var query = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
-                                //    query.Add("route", context.Request.Path.Value);
-                                //    var url = "/" + new QueryBuilder(query).ToQueryString();
-                                //    context.Response.Redirect(url);
-                                //}
                             }
                         });
                     });

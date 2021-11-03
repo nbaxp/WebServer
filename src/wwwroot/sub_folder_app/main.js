@@ -6,9 +6,6 @@ const app = Vue.createApp({
     },
     mounted: function () {
         document.getElementById('app').removeAttribute('class');//加载完成
-        if (window.route) {//history模式下，为了修复资源加载将路由暂存在了windows.route变量中
-            this.$router.push(window.route);
-        }
     }
 });
 
@@ -42,7 +39,7 @@ app.use(store);
 
 //vue router
 const router = new VueRouter.createRouter({
-    history: VueRouter.createWebHistory(document.querySelector('base')?.getAttribute('href')),
+    history: VueRouter.createWebHistory(document.querySelector('base').getAttribute('href')),
     routes: []
 });
 app.use(router);
