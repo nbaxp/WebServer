@@ -56,7 +56,6 @@ namespace WebServer
                                 name: "default",
                                 pattern: "{controller}/{action=Index}/{id?}");
                         });
-                        var config = app.ApplicationServices.GetService<IConfiguration>();
                         app.Use(async (context, next) =>
                         {
                             if (context.GetEndpoint() != null)
@@ -89,7 +88,7 @@ namespace WebServer
                                     {
                                         path += sep;
                                         context.Response.Headers.Add("x-real-path", path);
-                                        var html = File.ReadAllText(file);
+                                        var html = File.ReadAllText(Path.Combine(env.WebRootPath, file));
                                         html = html.Replace("<head>", $"<head>\n\t<base href=\"{path}\" />");
                                         await context.Response.WriteAsync(html);
                                     }

@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>preact</title>
+</head>
+
+<body>
+    <script type="importmap">
+    {
+      "imports": {
+        "preact": "https://unpkg.com/preact?module",
+        "htm":"https://unpkg.com/htm?module",
+        "preact-router":"https://cdn.jsdelivr.net/npm/preact-router@3.2.1/dist/preact-router.es.js",
+        "history":"https://cdn.jsdelivr.net/npm/history@5.1.0/history.development.js"
+      }
+    }
+    </script>
+    <script type="module">
+        import { h, Component, render } from 'preact';
+        import htm from 'htm';
+        import { Router } from 'preact-router';
+        import { createHashHistory } from 'history';
+
+        // Initialize htm with Preact
+        const html = htm.bind(h);
+
+        function App(props) {
+            return html`<h1>Hello ${props.name}!</h1><div>
+      <Router history={createHashHistory()}>
+        <Home path="/" />
+        <Profile path="/profile/:rest*" />
+      </Router>
+      <nav>
+        <a href="/">Home</a> <br />
+        <a href="/profile/me">My Profile</a><br />
+        <a href="/profile/alice">Alice's Profile</a>
+      </nav>
+    </div>`;
+        }
+
+        render(html`<${App} name="World" />`, document.body);
+    </script>
+</body>
+
+</html>

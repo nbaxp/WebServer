@@ -1,0 +1,59 @@
+﻿<template>
+    <el-container>
+        <el-header>
+            <el-menu :default-active="model.active" mode="horizontal">
+                <el-menu-item v-for="app in model.apps" :index="app.path">
+                    <router-link :to="app.path">{{app.text}}</router-link>
+                </el-menu-item>
+            </el-menu>
+        </el-header>
+        <el-container>
+            <el-aside width="200px">
+                <el-menu :default-active="model.active">
+                    <component v-for="app in model.apps" :is="getMenus(app)" :prefix="app.path"></component>
+                </el-menu>
+            </el-aside>
+            <el-container>
+                <el-main>
+                    <slot></slot>
+                </el-main>
+                <el-footer>
+                    <div style="text-align:center;">© 2021 Company, Inc.</div>
+                </el-footer>
+            </el-container>
+        </el-container>
+    </el-container>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                model: {
+                    active: '/',
+                    apps: []
+                }
+            };
+        },
+        mounted: function () {
+            setTimeout(o => {
+                this.model = {
+                    active: '/',
+                    apps: this.get('apps')
+                };
+            });
+        },
+        methods: {
+            getApps() {
+                return Enumerator.from(this.apps).orderBy(o => o.order).toArray();
+            },
+            getMenus(app) {
+                return app.name === 'default' ? 'menu' : app.name + '-menu';
+            }
+        }
+    }
+</script>
+<style>
+    .navbar {
+        padding: 1em;
+    }
+</style>

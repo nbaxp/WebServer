@@ -5,10 +5,7 @@ const app = Vue.createApp({
         };
     },
     mounted: function () {
-        document.getElementById('app').removeAttribute('class');//加载完成
-        if (window.route) {//history模式下，为了修复资源加载将路由暂存在了windows.route变量中
-            this.$router.push(window.route);
-        }
+        document.getElementById('app').removeAttribute('class');
     }
 });
 

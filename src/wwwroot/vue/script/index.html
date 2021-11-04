@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="lib/element-plus/dist/index.css" />
+    <title>FE</title>
+</head>
+
+<body>
+    <div id="app">
+        <div id="app" class="loading">
+            <router-view />
+        </div>
+    </div>
+    <script src="lib/vue/dist/vue.global.ext.js"></script>
+    <script src="lib/vuex/dist/vuex.global.js"></script>
+    <script src="lib/vue-router/dist/vue-router.global.js"></script>
+    <script src="lib/element-plus/dist/index.full.js"></script>
+    <script src="js/my.vue.ext.js"></script>
+
+    <script type="module">
+        const createApp = Vue.createApp;
+        const defineAsyncComponent = Vue.defineAsyncComponent;
+        const createStore = Vuex.createStore;
+        const createRouter = VueRouter.createRouter;
+        const createWebHistory = VueRouter.createWebHistory;
+
+        //vue
+        const app = createApp({
+            data() {
+                return {};
+            },
+            mounted: function () {
+                document.getElementById("app").removeAttribute("class");
+            },
+        });
+        //vuex
+        const store = createStore({
+            state() {
+                return {
+                    root: "/",
+                    apps: [
+                        {
+                            name: "default",
+                            text: "Web基础",
+                            path: "/",
+                        },
+                    ],
+                };
+            },
+            mutations: {
+                set(state, obj) {
+                    state[obj.key] = obj.value;
+                },
+            },
+        });
+        app.use(store);
+        //vue-router
+        const router = new createRouter({
+            history: createWebHistory(
+                document.querySelector("base")?.getAttribute("href")
+            ),
+            routes: [],
+        });
+        app.use(router);
+        //minxin
+        app.mixin({
+            methods: {
+                get(key) {
+                    return this.$store.state[key];
+                },
+                set(key, value) {
+                    this.$store.commit("set", { key: key, value: value });
+                },
+            },
+        });
+
+        MyVueExt.debug = true;
+        MyVueExt.defineAsyncComponent = defineAsyncComponent;
+        MyVueExt.configRouter(store, router);
+
+        app.use(ElementPlus);
+        app.mount("#app");
+    </script>
+</body>
+
+</html>

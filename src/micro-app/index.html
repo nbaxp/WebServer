@@ -1,17 +1,91 @@
 ﻿<!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+        <title>FE</title>
+    </head>
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FE</title>
-</head>
+    <body>
+        <div id="app">
+            <div id="app" class="loading">
+                <router-view />
+            </div>
+        </div>
+        <script type="importmap">
+            {
+                "imports": {
+                    "vue": "/lib/vue/dist/vue.esm-browser.ext.js",
+                    "vuex": "/lib/vuex/dist/vuex.esm-browser.js",
+                    "vue-router": "/lib/vue-router/dist/vue-router.esm-browser.js",
+                    "element-plus": "/lib/element-plus/dist/index.full.mjs"
+                }
+            }
+        </script>
+        <script src="js/my.vue.ext.js"></script>
+        <script type="module">
+            import { createApp,defineAsyncComponent } from "vue";
+            import { createRouter, createWebHistory } from "vue-router";
+            import { createStore } from "vuex";
+            import ElementPlus from "element-plus";
+            //vue
+            const app = createApp({
+                data() {
+                    return {};
+                },
+                mounted: function () {
+                    document.getElementById("app").removeAttribute("class");
+                },
+            });
+            //vuex
+            const store = createStore({
+                state() {
+                    return {
+                        root: "/",
+                        apps: [
+                            {
+                                name: "default",
+                                text: "Web基础",
+                                path: "/",
+                            },
+                        ],
+                    };
+                },
+                mutations: {
+                    set(state, obj) {
+                        state[obj.key] = obj.value;
+                    },
+                },
+            });
+            app.use(store);
+            //vue-router
+            const router = new createRouter({
+                history: createWebHistory(
+                    document.querySelector("base")?.getAttribute("href")
+                ),
+                routes: [],
+            });
+            app.use(router);
+            //minxin
+            app.mixin({
+                methods: {
+                    get(key) {
+                        return this.$store.state[key];
+                    },
+                    set(key, value) {
+                        this.$store.commit("set", { key: key, value: value });
+                    },
+                },
+            });
 
-<body>
-    <micro-app name="sub_folder_app" url="https://localhost/sub_folder_app/" baseroute="/sub_folder_app" />
-    <script src="https://cdn.jsdelivr.net/npm/@micro-zoe/micro-app@0.4.2/lib/index.umd.js"></script>
-    <script>
-        microApp.default.start();
-    </script>
-</body>
+            MyVueExt.debug = true;
+            MyVueExt.defineAsyncComponent=defineAsyncComponent;
+            MyVueExt.configRouter(store,router);
+            //MyVueExt.addComponent(app, 'layout', MyVueExt.basePath + 'components/layout.html');
+
+            app.use(ElementPlus);
+            app.mount("#app");
+        </script>
+    </body>
 </html>
