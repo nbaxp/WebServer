@@ -1,6 +1,7 @@
 document.write(`<script type="importmap">
 {
     "imports": {
+        "linq": "./lib/linq/linq.js",
         "vue": "./lib/vue/dist/vue.esm-browser.ext.js",
         "vuex": "./lib/vuex/dist/vuex.esm-browser.js",
         "vue-router": "./lib/vue-router/dist/vue-router.esm-browser.js",
