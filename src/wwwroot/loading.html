@@ -3,8 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WebView首页</title>
-    <!--用于WebView首页，WebView本地加载loading.html后，通过iframe加载远程首页，iframe加载完成后跳转到远程首页-->
+    <title>WebView</title>
     <style>
         body {
             width: 100vw;
@@ -24,7 +23,7 @@
                 height: 100%;
                 border-radius: 4px;
                 background: lightgreen;
-                -webkit-animation: load 1s ease infinite;
+                animation: load 1s ease infinite;
             }
 
         @keyframes load {
@@ -65,6 +64,6 @@
         <span></span>
         <span></span>
     </div>
-    <iframe style="display:none;" src="https://localhost:44330/" onload="window.location.href = this.src" />
+    <iframe style="display:none;" src="http://localhost/" onload="window.location.href = this.src" />
 </body>
 </html>

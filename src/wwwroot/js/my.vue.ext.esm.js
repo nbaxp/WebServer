@@ -1,18 +1,13 @@
 var MyVueExt = (function () {
-    Vue.Ext = true;
-    var exports = {};
-    exports.debug = false;
-    var basePath = document.querySelector('base')?.getAttribute('href') ?? document.location.href;
-    if(!basePath.startsWith("http"))
-    {
-        basePath = document.location.protocol+'//'+document.location.host+basePath;
-    }
-    exports.basePath = trimEnd(basePath,'/');
-    exports.componentsPath = '/components/';
-    exports.viewsPath = exports.componentsPath + 'views';
-    exports.componentExt = '.html';
-    exports.styleCounter = 'vc-style-counter';
-    exports.routerHome = '/home';
+    var exports = {
+        debug: false,
+        componentsPath: '/components',
+        viewsPath:'/views',
+        componentExt: '.html',
+        styleCounter: 'component-style-counter',
+        routerHome: '/home'
+    };
+    exports.basePath = trimEnd(document.location.protocol + '//' + document.location.host + document.querySelector('base')?.getAttribute('href') ?? document.location.href);
     function log(msg) {
         if (exports.debug) {
             console.log(msg);
@@ -61,7 +56,7 @@ var MyVueExt = (function () {
         }
     }
     function templateToModel(html, name, url) {
-        log({url});
+        log({ url });
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var templateTag = doc.querySelector('template');
         var template = templateTag ? templateTag.innerHTML : '<template></template>';
@@ -85,7 +80,7 @@ var MyVueExt = (function () {
         return model;
     }
     function addComponent(instance, name, url) {
-        instance.component(name, Vue.defineAsyncComponent(() => new Promise((resolve, reject) => {
+        instance.component(name, exports.defineAsyncComponent(() => new Promise((resolve, reject) => {
             fetch(url).then(function (response) {
                 return response.text();
             }).then(function (text) {
@@ -105,17 +100,20 @@ var MyVueExt = (function () {
     function patchComponent(instance, name, fun) {
         var result = fun();
         if (!result || typeof (result) === 'string') {
-            var url = exports.basePath + exports.componentsPath + name.replaceAll('-', "/") + exports.componentExt;
+            var url = exports.basePath + exports.componentsPath + '/' + name.replaceAll('-', "/") + exports.componentExt;
             addComponent(instance, name, url);
             result = fun();
         }
         return result;
     }
     function configRouter(store, router) {
+        if (router.options.history.base) {
+            exports.basePath = basePath = document.location.protocol + '//' + document.location.host + router.options.history.base
+        }
         router.beforeEach((to, from, next) => {
             var path = to.path === '/' ? exports.routerHome : to.path;
             var name = path.substring(1).replaceAll('/', "-");
-            var url = exports.basePath + exports.viewsPath + path + exports.componentExt;
+            var url = exports.basePath + exports.componentsPath + exports.viewsPath + path + exports.componentExt;
             if (!router.hasRoute(name)) {
                 fetch(url).then(function (response) {
                     return response.text();
@@ -157,4 +155,3 @@ var MyVueExt = (function () {
     exports.configRouter = configRouter;
     return exports;
 }());
-window.MyVueExt = MyVueExt;

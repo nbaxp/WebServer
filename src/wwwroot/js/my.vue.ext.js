@@ -1,14 +1,13 @@
 var MyVueExt = (function () {
-    Vue.Ext = true;
     var exports = {
         debug: false,
-        basePath: document.location.protocol + '//' + document.location.host + document.querySelector('base')?.getAttribute('href') ?? document.location.href,
-        componentsPath: '/components/',
+        componentsPath: '/components',
+        viewsPath:'/views',
         componentExt: '.html',
-        styleCounter: 'componetnt-style-counter',
+        styleCounter: 'component-style-counter',
         routerHome: '/home'
     };
-    exports.viewsPath = exports.componentsPath + 'views';
+    exports.basePath = trimEnd(document.location.protocol + '//' + document.location.host + document.querySelector('base')?.getAttribute('href') ?? document.location.href);
     function log(msg) {
         if (exports.debug) {
             console.log(msg);
@@ -81,7 +80,7 @@ var MyVueExt = (function () {
         return model;
     }
     function addComponent(instance, name, url) {
-        instance.component(name, Vue.defineAsyncComponent(() => new Promise((resolve, reject) => {
+        instance.component(name, exports.defineAsyncComponent(() => new Promise((resolve, reject) => {
             fetch(url).then(function (response) {
                 return response.text();
             }).then(function (text) {
@@ -101,7 +100,7 @@ var MyVueExt = (function () {
     function patchComponent(instance, name, fun) {
         var result = fun();
         if (!result || typeof (result) === 'string') {
-            var url = exports.basePath + exports.componentsPath + name.replaceAll('-', "/") + exports.componentExt;
+            var url = exports.basePath + exports.componentsPath + '/' + name.replaceAll('-', "/") + exports.componentExt;
             addComponent(instance, name, url);
             result = fun();
         }
@@ -114,7 +113,7 @@ var MyVueExt = (function () {
         router.beforeEach((to, from, next) => {
             var path = to.path === '/' ? exports.routerHome : to.path;
             var name = path.substring(1).replaceAll('/', "-");
-            var url = exports.basePath + exports.viewsPath + path + exports.componentExt;
+            var url = exports.basePath + exports.componentsPath + exports.viewsPath + path + exports.componentExt;
             if (!router.hasRoute(name)) {
                 fetch(url).then(function (response) {
                     return response.text();
