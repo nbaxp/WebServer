@@ -1,19 +1,16 @@
-﻿# 单文件绿色版静态文件Web服务器
+﻿# 使用 Nginx + Vue 搭建 SPA 网站
 
-将ASP.NET的Web服务器以单文件方式发布出来,同时集成了SPA单页应用的路由组件。可以用于前端开发时替代安装node.js或nginx作为开发服务器。
+扩展了 Vue 3 使其支持真正的动态组件；使用 Nginx 的 njs 实现 SPA 的配置。
 
-## 功能
+## Vue 3
 
-1. 提供HTTP/HTTPS协议支持
-1. 提供静态文件支持
-1. 提供CORS支持
-1. 提供SPA单页路由支持
+1. 动态加载远程组件，包括普通组件和路由组件
+2. 远程组件支持单文件组件格式
+3. 支持组件中使用import
+4. 支持组件css动态加载和卸载
 
-## 配置
+## Nginx
 
-配置文件为appsetting.json
-
-1. server.urls配置启动URL
-1. wwwroot配置网站根目录名称
-1. spa配置是否使用单页路由
-1. urls配置启动URL，默认会动态查找空闲的端口启动程序
+1. SPA 路由支持：无法找到的文件返回最近一层目录的index.html
+2. SAP 目录支持：将index.html的实际路径注入到base标签
+3. 添加 application/javascript mjs 配置
