@@ -1,7 +1,7 @@
 ﻿import { createApp, defineAsyncComponent } from "vue";
 import { createStore } from "vuex";
 import { createRouter, createWebHistory } from "vue-router";
-import ElementPlus from "element-plus";
+//import ElementPlus from "element-plus";
 
 //vue
 const app = createApp({
@@ -56,6 +56,8 @@ app.mixin({
 MyVueExt.debug = true;
 MyVueExt.defineAsyncComponent = defineAsyncComponent;
 MyVueExt.configRouter(store, router);
+//MyVueExt.addComponent(app,'layout','https://localhost/components/layout.html');
+//MyVueExt.addComponent(app,'menu','https://localhost/components/menu.html');
 
-app.use(ElementPlus);
+//app.use(ElementPlus);
 app.mount("#app");

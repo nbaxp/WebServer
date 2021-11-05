@@ -1,12 +1,5 @@
 ﻿<template>
     <layout>
-        <markdown>
-            <pre>
-            # a
-
-            ## b
-            </pre>
-        </markdown>
         <el-card>
             <template #header>
                 <div class="card-header">前端开发风格</div>
@@ -49,8 +42,12 @@
     </layout>
 </template>
 <script>
+    import {ElCard} from 'element-plus';
+
     export default {
+        components:{ElCard},
         mounted: function () {
+            console.log(ElCard);
         }
     }
 </script>
