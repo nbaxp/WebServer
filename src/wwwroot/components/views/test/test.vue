@@ -1,0 +1,31 @@
+﻿<style scoped>
+* {
+    color: red;
+    font-weight: bold;
+}
+</style>
+
+<template>
+    <layout>
+        <p class="greeting">{{ test() }}</p>
+    </layout>
+</template>
+
+<script>
+import Enumerable from "lib/linq/linq.mjs";
+
+export default {
+    data() {
+        return {
+            greeting: "Hello World!",
+        };
+    },
+    methods: {
+        test() {
+            return Enumerable.from("1,2,3,6,5,4".split(","))
+                .orderBy()
+                .toArray();
+        },
+    },
+};
+</script>

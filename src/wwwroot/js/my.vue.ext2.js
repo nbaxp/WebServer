@@ -2,12 +2,13 @@ var MyVueExt = (function () {
     var exports = {
         debug: false,
         componentsPath: '/components',
-        viewsPath:'/views',
-        componentExt: '.html',
+        viewsPath: '/views',
+        componentExt: '.vue',
         styleCounter: 'component-style-counter',
         routerHome: '/home'
     };
-    exports.basePath = trimEnd(document.location.protocol + '//' + document.location.host + document.querySelector('base')?.getAttribute('href') ?? document.location.href);
+    var basePath = document.location.protocol + '//' + document.location.host + document.querySelector('base')?.getAttribute('href') ?? document.location.href;
+    exports.basePath = trimEnd(basePath, '/');
     function log(msg) {
         if (exports.debug) {
             console.log(msg);
@@ -80,22 +81,7 @@ var MyVueExt = (function () {
         return model;
     }
     function addComponent(instance, name, url) {
-        instance.component(name, exports.defineAsyncComponent(() => new Promise((resolve, reject) => {
-            fetch(url).then(function (response) {
-                return response.text();
-            }).then(function (text) {
-                if (text) {
-                    var component = templateToModel(text, name, url);
-                    component.created = function () {
-                        addStyles(name, component.style);
-                    };
-                    component.unmounted = function () {
-                        removeStyles(name);
-                    };
-                    resolve(component);
-                }
-            });
-        })));
+        instance.component(name, exports.load(url));
     }
     function patchComponent(instance, name, fun) {
         var result = fun();
@@ -108,28 +94,22 @@ var MyVueExt = (function () {
     }
     function configRouter(store, router) {
         if (router.options.history.base) {
-            exports.basePath = basePath = document.location.protocol + '//' + document.location.host + router.options.history.base
+            exports.basePath = basePath = trimEnd(document.location.protocol + '//' + document.location.host + router.options.history.base, '/');
         }
         router.beforeEach((to, from, next) => {
             var path = to.path === '/' ? exports.routerHome : to.path;
             var name = path.substring(1).replaceAll('/', "-");
             var url = exports.basePath + exports.componentsPath + exports.viewsPath + path + exports.componentExt;
             if (!router.hasRoute(name)) {
-                fetch(url).then(function (response) {
-                    return response.text();
-                }).then(function (text) {
-                    if (text) {
-                        var model = templateToModel(text, name, url);
-                        var route = {
-                            name: name,
-                            path: to.path,
-                            component: model,
-                            meta: model.meta
-                        };
-                        router.addRoute(route);
-                        router.push({ path: to.path, query: to.query });
-                    }
-                });
+                var model = exports.load(url);
+                var route = {
+                    name: name,
+                    path: to.path,
+                    component: model,
+                    //meta: model.meta
+                };
+                router.addRoute(route);
+                router.push({ path: to.path, query: to.query });
             }
             else {
                 next();

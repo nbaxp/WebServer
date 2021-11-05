@@ -7,7 +7,8 @@ var MyVueExt = (function () {
         styleCounter: 'component-style-counter',
         routerHome: '/home'
     };
-    exports.basePath = trimEnd(document.location.protocol + '//' + document.location.host + document.querySelector('base')?.getAttribute('href') ?? document.location.href);
+    var basePath = document.location.protocol + '//' + document.location.host + document.querySelector('base')?.getAttribute('href') ?? document.location.href;
+    exports.basePath = trimEnd(basePath, '/');
     function log(msg) {
         if (exports.debug) {
             console.log(msg);
