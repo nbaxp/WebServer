@@ -7,13 +7,7 @@ var MyVueExt = (function () {
         styleCounter: "component-style-counter",
         routerHome: "/home",
     };
-    var basePath =
-        document.location.protocol +
-        "//" +
-        document.location.host +
-        document.querySelector("base")?.getAttribute("href") ??
-        document.location.href;
-    exports.basePath = trimEnd(basePath, "/");
+
     function log(msg) {
         if (exports.debug) {
             console.log(msg);
@@ -23,13 +17,7 @@ var MyVueExt = (function () {
         return input.endsWith(char) ? input.substr(0, input.length - 1) : input;
     }
     function append(parent, html) {
-        var frag = document.createDocumentFragment();
-        var div = document.createElement("div");
-        div.innerHTML = html;
-        var list = div.querySelectorAll("*");
-        for (var i = 0; i < list.length; i++) {
-            parent.appendChild(list[i]);
-        }
+        parent.insertAdjacentHTML('beforeend', html);
     }
     function addStyles(name, style) {
         var styleList = document.querySelectorAll("head style." + name);
@@ -131,13 +119,6 @@ var MyVueExt = (function () {
         return result;
     }
     function configRouter(store, router) {
-        if (router.options.history.base) {
-            exports.basePath = basePath =
-                document.location.protocol +
-                "//" +
-                document.location.host +
-                router.options.history.base;
-        }
         router.beforeEach((to, from, next) => {
             var path = to.path === "/" ? exports.routerHome : to.path;
             var name = path.substring(1).replaceAll("/", "-");
@@ -154,9 +135,7 @@ var MyVueExt = (function () {
                     })
                     .then(function (text) {
                         if (text) {
-                            templateToModel(text, name, url, function (
-                                component
-                            ) {
+                            templateToModel(text, name, url, function (component) {
                                 var route = {
                                     name: name,
                                     path: to.path,
@@ -189,11 +168,29 @@ var MyVueExt = (function () {
         });
     }
     function evalByImportUriData(script, url, func) {
+        script = script.replaceAll('./', exports.basePath + '/');
         const dataUri = "data:text/javascript;charset=utf-8," + encodeURIComponent(script + '\n//@ sourceURL=' + url);
         import(dataUri).then((namespaceObject) => {
             func(namespaceObject.default ?? {});
         });
     }
+    function config(app, defineAsyncComponent, base) {
+        exports.defineAsyncComponent = defineAsyncComponent;
+        exports.basePath = document.location.protocol +
+            "//" + document.location.host +
+            trimEnd(base || (document.querySelector("base")?.getAttribute("href") ?? document.location.href), "/");
+        if (window.Vue) {
+            var VueResolveComponent = Vue.resolveComponent;
+            Vue.resolveComponent = function (name, maybeSelfReference) {
+                return exports.patchComponent(app, name, () => VueResolveComponent(name, maybeSelfReference));
+            };
+            var VueResolveDynamicComponent = Vue.resolveDynamicComponent;
+            Vue.resolveDynamicComponent = function (component) {
+                return exports.patchComponent(app, component, () => VueResolveDynamicComponent(component));
+            };
+        }
+    }
+    exports.config = config;
     exports.addComponent = addComponent;
     exports.patchComponent = patchComponent;
     exports.configRouter = configRouter;

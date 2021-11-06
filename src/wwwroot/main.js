@@ -2,6 +2,7 @@
 import { createStore } from "vuex";
 import { createRouter, createWebHistory } from "vue-router";
 //import ElementPlus from "element-plus";
+import * as Vue from "vue";
 
 //vue
 const app = createApp({
@@ -54,7 +55,7 @@ app.mixin({
 });
 
 MyVueExt.debug = true;
-MyVueExt.defineAsyncComponent = defineAsyncComponent;
+MyVueExt.config(app,defineAsyncComponent);
 MyVueExt.configRouter(store, router);
 //MyVueExt.addComponent(app,'layout','https://localhost/components/layout.html');
 //MyVueExt.addComponent(app,'menu','https://localhost/components/menu.html');

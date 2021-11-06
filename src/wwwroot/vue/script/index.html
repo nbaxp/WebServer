@@ -14,7 +14,7 @@
             <router-view />
         </div>
     </div>
-    <script src="lib/vue/dist/vue.global.ext.js"></script>
+    <script src="lib/vue/dist/vue.global.js"></script>
     <script src="lib/vuex/dist/vuex.global.js"></script>
     <script src="lib/vue-router/dist/vue-router.global.js"></script>
     <script src="lib/element-plus/dist/index.full.js"></script>
@@ -78,7 +78,7 @@
         });
 
         MyVueExt.debug = true;
-        MyVueExt.defineAsyncComponent = defineAsyncComponent;
+        MyVueExt.config(app,defineAsyncComponent);
         MyVueExt.configRouter(store, router);
 
         app.use(ElementPlus);
