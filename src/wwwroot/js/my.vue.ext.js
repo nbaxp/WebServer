@@ -23,13 +23,7 @@ var MyVueExt = (function () {
         return input.endsWith(char) ? input.substr(0, input.length - 1) : input;
     }
     function append(parent, html) {
-        var frag = document.createDocumentFragment();
-        var div = document.createElement("div");
-        div.innerHTML = html;
-        var list = div.querySelectorAll("*");
-        for (var i = 0; i < list.length; i++) {
-            parent.appendChild(list[i]);
-        }
+        parent.insertAdjacentHTML('beforeend',html);
     }
     function addStyles(name, style) {
         var styleList = document.querySelectorAll("head style." + name);
