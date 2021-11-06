@@ -6661,14 +6661,9 @@ const DIRECTIVES = 'directives';
  * @private
  */
 function resolveComponent(name, maybeSelfReference) {
-     //add start
-     const instance = currentRenderingInstance || currentInstance;
-     return MyVueExt.patchComponent(instance.appContext.app, name, function () {
-         return resolveAsset(COMPONENTS, name, true, maybeSelfReference) || name;
-     });
-     //add end
-     //hide
-     //return resolveAsset(COMPONENTS, name, true, maybeSelfReference) || name;
+    return MyVueExt.patchComponent(currentRenderingInstance.appContext.app, name, function () {
+        return resolveAsset(COMPONENTS, name, true, maybeSelfReference) || name;//warp by wg
+    });
 }
 const NULL_DYNAMIC_COMPONENT = Symbol();
 /**
@@ -6676,14 +6671,9 @@ const NULL_DYNAMIC_COMPONENT = Symbol();
  */
 function resolveDynamicComponent(component) {
     if (isString(component)) {
-        //add start
-        const instance = currentRenderingInstance || currentInstance;
-        return MyVueExt.patchComponent(instance.appContext.app, component, function () {
-            return resolveAsset(COMPONENTS, component, false) || component;
+        return MyVueExt.patchComponent(currentRenderingInstance.appContext.app, component, function () {
+            return resolveAsset(COMPONENTS, component, false) || component;//warp by wg
         });
-        //add end
-        //hide
-        //return resolveAsset(COMPONENTS, component, false) || component;
     }
     else {
         // invalid types will fallthrough to createVNode and raise warning
