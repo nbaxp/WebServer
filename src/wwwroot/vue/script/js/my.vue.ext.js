@@ -188,6 +188,7 @@ var MyVueExt = (function () {
             Vue.resolveDynamicComponent = function (component) {
                 return exports.patchComponent(app, component, () => VueResolveDynamicComponent(component));
             };
+            exports.defineAsyncComponent = exports.defineAsyncComponent || Vue.defineAsyncComponent;
         }
     }
     exports.config = config;

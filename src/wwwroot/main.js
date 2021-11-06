@@ -1,4 +1,4 @@
-﻿import { createApp, defineAsyncComponent } from "vue";
+﻿import { createApp, defineAsyncComponent, resolveComponent } from "vue";
 import { createStore } from "vuex";
 import { createRouter, createWebHistory } from "vue-router";
 //import ElementPlus from "element-plus";
